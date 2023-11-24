@@ -10,12 +10,13 @@ class ProductController extends Controller
 {
     public function index(): JsonResponse
     {
-        $products = Product::all();
+        $products = Product::with('category')->get();
         return response()->json($products);
     }
 
-    public function show(Product $product): JsonResponse
+    public function show(int $id): JsonResponse
     {
+        $product = Product::with('category')->find($id);
         return response()->json($product);
     }
 
