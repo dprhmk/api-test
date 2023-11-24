@@ -11,7 +11,7 @@ class ProductController extends Controller
     public function index(Request $request): JsonResponse
     {
         $perPage = $request->query('per_page') ?? 10;
-        $products = Product::with('category')->paginate($perPage);
+        $products = Product::with('category')->paginate($perPage)->withQueryString();
         return response()->json($products);
     }
 
