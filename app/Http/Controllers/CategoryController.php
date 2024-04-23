@@ -14,8 +14,10 @@ class CategoryController extends Controller
         return response()->json($productCategories);
     }
 
-    public function show(ProductCategory $productCategory): JsonResponse
+    public function show(Request $request): JsonResponse
     {
+        $id = $request->route('id');
+        $productCategory = ProductCategory::query()->find($id);
         return response()->json($productCategory);
     }
 
@@ -33,6 +35,7 @@ class CategoryController extends Controller
 
     public function destroy(ProductCategory $productCategory): JsonResponse
     {
+        $productCategory->products()->delete();
         $productCategory->delete();
         return response()->json(null, 204);
     }

@@ -10,6 +10,8 @@ class ProductCategory extends Model
 {
     use HasFactory;
 
+    protected $guarded = ['id'];
+
     public function products(): HasMany
     {
         return $this->hasMany(Product::class, 'category_id', 'id');
