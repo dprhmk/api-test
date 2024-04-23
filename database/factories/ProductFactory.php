@@ -22,7 +22,7 @@ class ProductFactory extends Factory
             'category_id' => ProductCategory::query()->inRandomOrder()->first(),
             'price' => rand(1000, 100000),
             'description' => $this->faker->text(500),
-            'image' => env('APP_URL').'/images/default.jpg',
+            'image' => env('APP_URL').'/storage/images/default.jpg',
         ];
     }
 }

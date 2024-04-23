@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Product;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class ProductController extends Controller
 {
@@ -28,21 +29,31 @@ class ProductController extends Controller
 
     public function store(Request $request): JsonResponse
     {
-        $product = Product::query()->create($request->all());
+        $product = Product::query()->create($request->except('image'));
+
+        if($request->has('image')) {
+            $imageName = uniqid() . '.' . $request->image->extension();
+            $request->image->storeAs('images', $imageName, 'public');
+
+            $imgPath = env('APP_URL').Storage::url("images/$imageName");
+            $product->update(['image' => $imgPath]);
+        }
+
         return response()->json($product, 201);
     }
 
     public function update(Request $request, Product $product): JsonResponse
     {
-        $data = $request->all();
+        $product->update($request->except('image'));
+
         if($request->has('image')) {
-            $image = $request->file('image');
-            $imageName = time() . '.' . $image->extension();
-            $image->move(public_path('images'), $imageName);
-            $data['image'] = env('APP_URL')."/images/$imageName";
+            $imageName = uniqid() . '.' . $request->image->extension();
+            $request->image->storeAs('images', $imageName, 'public');
+
+            $imgPath = env('APP_URL').Storage::url("images/$imageName");
+            $product->update(['image' => $imgPath]);
         }
 
-        $product->update($data);
         return response()->json($product, 200);
     }
 
