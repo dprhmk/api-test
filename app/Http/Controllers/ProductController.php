@@ -34,7 +34,15 @@ class ProductController extends Controller
 
     public function update(Request $request, Product $product): JsonResponse
     {
-        $product->update($request->all());
+        $data = $request->all();
+        if($request->has('image')) {
+            $image = $request->file('image');
+            $imageName = time() . '.' . $image->extension();
+            $image->move(public_path('images'), $imageName);
+            $data['image'] = env('APP_URL')."/images/$imageName";
+        }
+
+        $product->update($data);
         return response()->json($product, 200);
     }
 
